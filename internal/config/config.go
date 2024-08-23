@@ -176,7 +176,7 @@ func maskPassword(val string) string {
 	}
 	matches := regex.FindStringSubmatch(val)
 	for i, v := range regex.SubexpNames() {
-		if "password" == v {
+		if v == "password" {
 			val = strings.ReplaceAll(val, matches[i], "****")
 		}
 	}

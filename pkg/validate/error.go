@@ -2,7 +2,7 @@ package validate
 
 import (
 	"fmt"
-	"go-splitwise/pkg/logging"
+	"gin-splitwise/pkg/logging"
 	"reflect"
 
 	"github.com/go-playground/validator/v10"
