@@ -15,7 +15,7 @@ func MetricsMiddleware(mp *MetricsProvider) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
-		elapsed := time.Now().Sub(start)
+		elapsed := time.Since(start)
 		var (
 			code = c.Writer.Status()
 			method = c.Request.Method
