@@ -57,6 +57,6 @@ func IsCacheSkip(ctx context.Context) bool {
 	return false
 }
 
-func WithSkipCache(ctx context.Context, skipCache bool) context.Context {
+func WithCacheSkip(ctx context.Context, skipCache bool) context.Context {
 	return context.WithValue(ctx, skipCacheKey, skipCache)
 }
