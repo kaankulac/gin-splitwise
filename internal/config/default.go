@@ -15,7 +15,7 @@ var defaultConfig = map[string]interface{}{
 	"jwt.secret": "secret",
 	"jwt.sessionTime": "86400s",
 
-	"db.dataSourceName": "", //TODO add default postgresql connection string
+	"db.dataSourceName": "postgres://postgres:123123@localhost:5432/splitwise?sslmode=disable",
 	"db.logLevel": 1,
 	"db.migrate.enable": false,
 	"db.migrate.dir": "",

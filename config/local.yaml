@@ -11,7 +11,7 @@ jwt:
   secret: jwt_secret
   sessionTime: 86400s
 db:
-  dataSourceName:
+  dataSourceName: postgres://postgres:123123@localhost:5432/splitwise?sslmode=disable
   logLevel: 1
   migrate:
     enable: true
