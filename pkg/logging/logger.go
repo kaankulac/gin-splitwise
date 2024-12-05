@@ -45,6 +45,7 @@ func SetLevel(l zapcore.Level) {
 func NewLogger(conf *Config) *zap.SugaredLogger {
 	ec := zap.NewProductionEncoderConfig()
 	ec.EncodeTime = zapcore.ISO8601TimeEncoder
+	ec.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	cfg := zap.Config{
 		Encoding: conf.Encoding,
 		EncoderConfig: ec,

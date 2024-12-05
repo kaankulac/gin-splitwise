@@ -7,6 +7,7 @@ import (
 	"gin-splitwise/internal/database"
 	"gin-splitwise/internal/middleware"
 	"gin-splitwise/internal/middleware/handler"
+	"gin-splitwise/internal/shared"
 	"gin-splitwise/pkg/logging"
 	"gin-splitwise/pkg/validate"
 	"net/http"
@@ -65,7 +66,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // GET /v1/api/user/me
 func (h *Handler) currentUser(c *gin.Context) {
 	handler.HandleRequest(c, func(c *gin.Context) *handler.Response {
-		currentUser := MustCurrentUser(c)
+		currentUser := shared.MustCurrentUser(c)
 		find, err := h.accountDB.FindByEmail(c.Request.Context(), currentUser.Email)
 		if err != nil || find.Disabled {
 			if database.IsRecordNotFoundErr(err) || find.Disabled {
@@ -81,12 +82,12 @@ func (h *Handler) currentUser(c *gin.Context) {
 func (h *Handler) update(c *gin.Context) {
 	handler.HandleRequest(c, func(c *gin.Context) *handler.Response {
 		logger := logging.FromContext(c)
-		currentUser := MustCurrentUser(c)
+		currentUser := shared.MustCurrentUser(c)
 		type RequestBody struct {
 			User struct {
 				Username string `json:"username" binding:"omitempty"`
 				Password string `json:"password" binding:"omitempty,min=8"`
-				Image string `json:"image"`
+				Image string `json:"image" binding:"omitempty"`
 			} `json:"user"`
 		}
 		var body RequestBody
@@ -148,6 +149,7 @@ func RouteV1(cfg *config.Config, h *Handler, r *gin.Engine, auth *jwt.GinJWTMidd
 	{
 		v1.GET("/users/profile", h.currentUser)
 		v1.PUT("/users/profile", h.update)
+		v1.POST("/groups")
 	}
 }
 

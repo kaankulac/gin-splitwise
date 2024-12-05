@@ -9,6 +9,7 @@ import (
 	"gin-splitwise/internal/cache"
 	"gin-splitwise/internal/config"
 	"gin-splitwise/internal/database"
+	"gin-splitwise/internal/group"
 	"gin-splitwise/internal/metric"
 	"gin-splitwise/internal/middleware"
 	"gin-splitwise/pkg/logging"
@@ -69,6 +70,7 @@ func runApplication() {
 		),
 		fx.Invoke(
 			account.RouteV1,
+			group.RouteV1,
 			func(r *gin.Engine) {},
 		),
 	)
@@ -109,5 +111,5 @@ func newServer(lc fx.Lifecycle, cfg *config.Config, mp *metric.MetricsProvider) 
 
 func printAppInfo(cfg *config.Config) {
 	b, _ := json.MarshalIndent(&cfg, "", " ")
-	logging.DefaultLogger().Infof("application information\n%s", string(b))
+	logging.DefaultLogger().Infof("APPLICATION INFORMATION \n%s", string(b))
 }
