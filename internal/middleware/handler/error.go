@@ -13,6 +13,9 @@ const (
 	InvalidUriValue = ErrorCode("InvalidUriValue")
 	InvalidBodyValue = ErrorCode("InvalidBodyValue")
 
+	// 403
+	Forbidden = ErrorCode("Forbidden")
+
 	// 404
 	NotFoundEntity = ErrorCode("NotFoundEntity")
 

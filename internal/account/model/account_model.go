@@ -8,7 +8,7 @@ import (
 
 type Account struct {
 	ID uint `gorm:"column:id"`
-	Username string `gorm:"column:username"`
+	Username string `gorm:"column:username;unique"`
 	Email string `gorm:"column:email"`
 	Password string `gorm:"column:password"`
 	Image string `gorm:"column:image"`
@@ -18,7 +18,7 @@ type Account struct {
 }
 
 func (a Account) String() string {
-	return fmt.Sprintf("Account{ID:%d,Username:%s,Password:%s,Image:%s,CreatedAt: %v,UpdatedAt: %v,Disabled:%v}", a.ID, a.Username, "[PROTECTED]", a.Image, a.CreatedAt, a.UpdatedAt, a.Disabled)
+	return fmt.Sprintf("Account{ID:%d,Username:%s,Password:%s,Image:%s,CreatedAt:%v,UpdatedAt:%v,Disabled:%v}", a.ID, a.Username, "[PROTECTED]", a.Image, a.CreatedAt, a.UpdatedAt, a.Disabled)
 }
 
 func (a *Account) UnmarshalJSON(b []byte) error {
