@@ -9,7 +9,10 @@ import (
 	"gin-splitwise/internal/cache"
 	"gin-splitwise/internal/config"
 	"gin-splitwise/internal/database"
+	"gin-splitwise/internal/expense"
+	expenseDB "gin-splitwise/internal/expense/database"
 	"gin-splitwise/internal/group"
+	groupDB "gin-splitwise/internal/group/database"
 	"gin-splitwise/internal/metric"
 	"gin-splitwise/internal/middleware"
 	"gin-splitwise/pkg/logging"
@@ -64,7 +67,13 @@ func runApplication() {
 			accountDB.NewAccountDB,
 			account.NewAuthMiddleware,
 			account.NewHandler,
-			// setup article packages
+			// setup group packages
+			groupDB.NewGroupDB,
+			groupDB.NewGroupMemberDB,
+			group.NewHandler,
+			// setup expense packages
+			expenseDB.NewExpenseDB,
+			expense.NewHandler,
 			// server
 			newServer,
 		),
@@ -86,9 +95,9 @@ func newServer(lc fx.Lifecycle, cfg *config.Config, mp *metric.MetricsProvider) 
 	r.Use(metric.MetricsMiddleware(mp))
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.ServerConfig.Port),
-		Handler: r,
-		ReadTimeout: cfg.ServerConfig.ReadTimeout,
+		Addr:         fmt.Sprintf(":%d", cfg.ServerConfig.Port),
+		Handler:      r,
+		ReadTimeout:  cfg.ServerConfig.ReadTimeout,
 		WriteTimeout: cfg.ServerConfig.WriteTimeout,
 	}
 	lc.Append(fx.Hook{

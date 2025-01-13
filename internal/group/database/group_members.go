@@ -19,6 +19,10 @@ type GroupMemberDB interface {
 	FindByUserID(ctx context.Context, id uint) ([]model.GroupMember, error)
 }
 
+func NewGroupMemberDB(db *gorm.DB) GroupMemberDB {
+	return &groupMemberDB{db: db}
+}
+
 type groupMemberDB struct {
 	db *gorm.DB
 }

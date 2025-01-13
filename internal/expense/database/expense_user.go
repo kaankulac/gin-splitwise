@@ -18,6 +18,7 @@ type ExpenseUserDB interface {
 
 	Delete(ctx context.Context, userId uint, expenseId uint) error
 
+	PayExpense(ctx context.Context, userId uint, expenseId uint) error
 }
 
 type expenseUserDB struct {
@@ -72,6 +73,22 @@ func (e *expenseUserDB) Delete(ctx context.Context, userId uint, expenseId uint)
 	chain := db.WithContext(ctx).Where("user_id = ? AND expense_id = ?", userId, expenseId).Delete(&model.ExpenseUser{})
 	if chain.Error != nil {
 		logger.Error("expenseUser.db.Delete failed to delete", "err", chain.Error)
+		return chain.Error
+	}
+	if chain.RowsAffected == 0 {
+		return database.ErrNotFound
+	}
+	return nil
+}
+
+func (e *expenseUserDB) PayExpense(ctx context.Context, userId uint, expenseId uint) error {
+	logger := logging.FromContext(ctx)
+	db := database.FromContext(ctx, e.db)
+	logger.Debugw("expenseUser.db.PayExpense", "userId", userId, "expenseId", expenseId)
+
+	chain := db.WithContext(ctx).Where("user_id = ? AND expense_id = ?", userId, expenseId).Update("paid", true)
+	if chain.Error != nil {
+		logger.Error("expenseUser.db.PayExpense failed to update", "err", chain.Error)
 		return chain.Error
 	}
 	if chain.RowsAffected == 0 {

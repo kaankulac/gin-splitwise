@@ -7,18 +7,27 @@ import (
 )
 
 type Expense struct {
-	ID uint `gorm:"column:id"`
-	GroupId uint `gorm:"column:group_id;primaryKey"`
-	UserId uint `gorm:"column:user_id;primaryKey"`
-	TotalAmount uint `gorm:"column:total_amount"`
-	PerUserAmount uint `gorm:"column:per_user_amount"`
-	CreatedAt time.Time `gorm:"column:created_at"`
+	ID            uint      `gorm:"column:id"`
+	GroupId       uint      `gorm:"column:group_id;primaryKey"`
+	UserId        uint      `gorm:"column:user_id;primaryKey"`
+	TotalAmount   uint      `gorm:"column:total_amount"`
+	PerUserAmount uint      `gorm:"column:per_user_amount"`
+	HasPayment    bool      `gorm:"column:has_payment"`
+	CreatedAt     time.Time `gorm:"column:created_at"`
 }
 
 type ExpenseUser struct {
-	UserId uint `gorm:"column:user_id;primaryKey"`
+	UserId    uint `gorm:"column:user_id;primaryKey"`
 	ExpenseId uint `gorm:"column:expense_id;primaryKey"`
-	Amount uint `gorm:"column:amount"`
+	Amount    uint `gorm:"column:amount"`
+	Paid      bool `gorm:"column:paid"`
+}
+
+type UserBalance struct {
+	UserId         uint `gorm:"column:user_id;primaryKey"`
+	CounterPartyId uint `gorm:"column:counter_party_id;primaryKey"`
+	GroupId        uint `gorm:"column:group_id;primaryKey"`
+	Balance        uint `gorm:"column:balance"`
 }
 
 func (e Expense) String() string {
@@ -27,10 +36,10 @@ func (e Expense) String() string {
 
 func (e *Expense) UnmarshalJSON(b []byte) error {
 	var tmp struct {
-		ID uint `json:"id"`
-		GroupId uint `json:"group_id"`
-		UserId uint `json:"user_id"`
-		TotalAmount uint `json:"total_amount"`
+		ID            uint `json:"id"`
+		GroupId       uint `json:"group_id"`
+		UserId        uint `json:"user_id"`
+		TotalAmount   uint `json:"total_amount"`
 		PerUserAmount uint `json:"per_user_amount"`
 	}
 	err := json.Unmarshal(b, &tmp)

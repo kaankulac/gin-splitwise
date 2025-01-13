@@ -15,15 +15,22 @@ type GroupDB interface {
 	Update(ctx context.Context, id uint, group *model.Group) error
 
 	FindByID(ctx context.Context, id uint) (*model.Group, error)
-	
+
 	Delete(ctx context.Context, id uint) error
 
 	CheckOwner(ctx context.Context, groupID uint, userID uint) (bool, error)
-	
+
 	IncrementMemberCount(ctx context.Context, id uint) error
 
 	DecrementMemberCount(ctx context.Context, id uint) error
 
+	IncrementTotalExpenseCount(ctx context.Context, id uint, amount uint) error
+
+	DecrementTotalExpenseCount(ctx context.Context, id uint, amount uint) error
+}
+
+func NewGroupDB(db *gorm.DB) GroupDB {
+	return &groupDB{db: db}
 }
 
 type groupDB struct {
@@ -135,7 +142,7 @@ func (g *groupDB) IncrementMemberCount(ctx context.Context, id uint) error {
 	return nil
 }
 
-func (g* groupDB) DecrementMemberCount(ctx context.Context, id uint) error {
+func (g *groupDB) DecrementMemberCount(ctx context.Context, id uint) error {
 	logger := logging.FromContext(ctx)
 	db := database.FromContext(ctx, g.db)
 	logger.Debugw("group.db.DecrementMemberCount", "id", id)
@@ -146,6 +153,44 @@ func (g* groupDB) DecrementMemberCount(ctx context.Context, id uint) error {
 		Update("total_member", gorm.Expr("total_member - ?", 1))
 	if chain.Error != nil {
 		logger.Error("group.db.DecrementMemberCount failed to update", "err", chain.Error)
+		return chain.Error
+	}
+	if chain.RowsAffected == 0 {
+		return database.ErrNotFound
+	}
+	return nil
+}
+
+func (g *groupDB) IncrementTotalExpenseCount(ctx context.Context, id uint, amount uint) error {
+	logger := logging.FromContext(ctx)
+	db := database.FromContext(ctx, g.db)
+	logger.Debugw("group.db.IncrementTotalExpenseCount", "id", id)
+
+	chain := db.WithContext(ctx).
+		Model(&model.Group{}).
+		Where("id = ?", id).
+		Update("total_expense", gorm.Expr("total_expense + ?", amount))
+	if chain.Error != nil {
+		logger.Error("group.db.IncrementTotalExpenseCount failed to update", "err", chain.Error)
+		return chain.Error
+	}
+	if chain.RowsAffected == 0 {
+		return database.ErrNotFound
+	}
+	return nil
+}
+
+func (g *groupDB) DecrementTotalExpenseCount(ctx context.Context, id uint, amount uint) error {
+	logger := logging.FromContext(ctx)
+	db := database.FromContext(ctx, g.db)
+	logger.Debugw("group.db.DecrementTotalExpenseCount", "id", id)
+
+	chain := db.WithContext(ctx).
+		Model(&model.Group{}).
+		Where("id = ?", id).
+		Update("total_expense", gorm.Expr("total_expense - ?", amount))
+	if chain.Error != nil {
+		logger.Error("group.db.DecrementTotalExpenseCount failed to update", "err", chain.Error)
 		return chain.Error
 	}
 	if chain.RowsAffected == 0 {

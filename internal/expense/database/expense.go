@@ -12,13 +12,17 @@ import (
 type ExpenseDB interface {
 	Save(ctx context.Context, expense *model.Expense) error
 
-	FindById(ctx context.Context, id uint) (*model.Expense, error) 
+	FindById(ctx context.Context, id uint) (*model.Expense, error)
 
 	Delete(ctx context.Context, id uint) error
 
 	FindByGroup(ctx context.Context, groupId uint) ([]model.Expense, error)
 
 	FindByUser(ctx context.Context, userId uint) ([]model.Expense, error)
+}
+
+func NewExpenseDB(db *gorm.DB) ExpenseDB {
+	return &expenseDB{db: db}
 }
 
 type expenseDB struct {
