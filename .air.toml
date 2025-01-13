@@ -1,0 +1,4 @@
+[build]
+cmd = "go run ./cmd/server/"
+tmp_dir = "tmp"
+include_ext = ["go", "tmpl", "html"]
