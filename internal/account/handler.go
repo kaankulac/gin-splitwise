@@ -28,7 +28,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		type RequestBody struct {
 			User struct {
 				Username string `json:"username" binding:"required"`
-				Email string `json:"email" binding:"email"`
+				Email    string `json:"email" binding:"email"`
 				Password string `json:"password" binding:"required,min=8"`
 			} `json:"user"`
 		}
@@ -49,7 +49,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		}
 		acc := model.Account{
 			Username: body.User.Username,
-			Email: body.User.Email,
+			Email:    body.User.Email,
 			Password: password,
 		}
 		err = h.accountDB.Save(c.Request.Context(), &acc)
@@ -87,7 +87,7 @@ func (h *Handler) update(c *gin.Context) {
 			User struct {
 				Username string `json:"username" binding:"omitempty"`
 				Password string `json:"password" binding:"omitempty,min=8"`
-				Image string `json:"image" binding:"omitempty"`
+				Image    string `json:"image" binding:"omitempty"`
 			} `json:"user"`
 		}
 		var body RequestBody
@@ -140,16 +140,15 @@ func RouteV1(cfg *config.Config, h *Handler, r *gin.Engine, auth *jwt.GinJWTMidd
 	// Non-Authenticated Routes
 	v1.Use()
 	{
-		v1.POST("users/login", auth.LoginHandler)
-		v1.POST("users/signup", h.signUp)
+		v1.POST("/users/login", auth.LoginHandler)
+		v1.POST("/users/signup", h.signUp)
 	}
-	
+
 	// Authenticated Routes
 	v1.Use(auth.MiddlewareFunc())
 	{
 		v1.GET("/users/profile", h.currentUser)
 		v1.PUT("/users/profile", h.update)
-		v1.POST("/groups")
 	}
 }
 

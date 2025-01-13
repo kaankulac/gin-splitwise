@@ -19,20 +19,20 @@ import (
 )
 
 type Handler struct {
-	groupDB groupDB.GroupDB
+	groupDB       groupDB.GroupDB
 	groupMemberDB groupDB.GroupMemberDB
-	accountDB accountDB.AccountDB
+	accountDB     accountDB.AccountDB
 }
 
 // POST /v1/api/groups
-func(h *Handler) createGroup(c *gin.Context) {
+func (h *Handler) createGroup(c *gin.Context) {
 	handler.HandleRequest(c, func(c *gin.Context) *handler.Response {
 		logger := logging.FromContext(c)
 		type RequestBody struct {
 			Group struct {
-				Title string `json:"title"`
+				Title       string `json:"title"`
 				Description string `json:"description"`
-				Image string `json:"image"`
+				Image       string `json:"image"`
 			} `json:"group"`
 		}
 		var body RequestBody
@@ -45,18 +45,18 @@ func(h *Handler) createGroup(c *gin.Context) {
 			return handler.NewErrorResponse(http.StatusBadRequest, handler.InvalidBodyValue, "invalid group payload in body", details)
 		}
 
-		currentUser := shared.MustCurrentUser(c);
+		currentUser := shared.MustCurrentUser(c)
 
 		group := model.Group{
-			Title: body.Group.Title,
-			Description: body.Group.Description,
-			Image: body.Group.Image,
+			Title:        body.Group.Title,
+			Description:  body.Group.Description,
+			Image:        body.Group.Image,
 			TotalExpense: 0,
-			TotalMember: 0,
-			OwnerId: currentUser.ID,
+			TotalMember:  0,
+			OwnerId:      currentUser.ID,
 		}
 
-		err := h.groupDB.Save(c.Request.Context(), &group);
+		err := h.groupDB.Save(c.Request.Context(), &group)
 		if err != nil {
 			return handler.NewInternalServerErrorResponse(err)
 		}
@@ -73,9 +73,9 @@ func (h *Handler) updateGroup(c *gin.Context) {
 		}
 		type RequestBody struct {
 			Group struct {
-				Title string `json:"title" binding:"omitempty"`
+				Title       string `json:"title" binding:"omitempty"`
 				Description string `json:"description" binding:"omitempty"`
-				Image string `json:"image" binding:"omitempty"`
+				Image       string `json:"image" binding:"omitempty"`
 			} `json:"group"`
 		}
 		var uri RequestUri
@@ -105,12 +105,12 @@ func (h *Handler) updateGroup(c *gin.Context) {
 		}
 
 		group := model.Group{
-			Title: body.Group.Title,
+			Title:       body.Group.Title,
 			Description: body.Group.Description,
-			Image: body.Group.Image,
+			Image:       body.Group.Image,
 		}
 
-		err := h.groupDB.Update(c.Request.Context(), uri.GroupId, &group);
+		err := h.groupDB.Update(c.Request.Context(), uri.GroupId, &group)
 		if err != nil {
 			return handler.NewInternalServerErrorResponse(err)
 		}
@@ -124,8 +124,8 @@ func (h *Handler) addGroupMember(c *gin.Context) {
 		currentUser := shared.MustCurrentUser(c)
 		type RequestBody struct {
 			GroupMember struct {
-				Email string `json:"email" binding:"required"`
-				GroupId uint `json:"groupId" binding:"required,numeric"`
+				Email   string `json:"email" binding:"required"`
+				GroupId uint   `json:"groupId" binding:"required,numeric"`
 			}
 		}
 		var body RequestBody
@@ -154,9 +154,9 @@ func (h *Handler) addGroupMember(c *gin.Context) {
 		}
 
 		err = h.groupMemberDB.Add(c.Request.Context(), &model.GroupMember{
-			GroupId: body.GroupMember.GroupId,
-			UserId: acc.ID,
-			TotalDebt: 0,
+			GroupId:     body.GroupMember.GroupId,
+			UserId:      acc.ID,
+			TotalDebt:   0,
 			TotalCredit: 0,
 		})
 		if err != nil {
@@ -180,7 +180,7 @@ func (h *Handler) leaveGroup(c *gin.Context) {
 			logger.Errorw("group.handler.leaveGroup failed to bind uri", "err", err)
 			var details []*validate.ValidationErrDetail
 			if vErrs, ok := err.(validator.ValidationErrors); ok {
-				details = validate.ValidationErrorDetails(&uri, "uri", vErrs)		
+				details = validate.ValidationErrorDetails(&uri, "uri", vErrs)
 			}
 			return handler.NewErrorResponse(http.StatusBadRequest, handler.InvalidBodyValue, "invalid group id in uri", details)
 		}
@@ -191,7 +191,7 @@ func (h *Handler) leaveGroup(c *gin.Context) {
 			}
 			return handler.NewErrorResponse(http.StatusForbidden, handler.Forbidden, "owner cannot leave the group", nil)
 		}
-		
+
 		err := h.groupMemberDB.Remove(c.Request.Context(), uri.GroupId, currentUser.ID)
 		if err != nil {
 			return handler.NewInternalServerErrorResponse(err)
@@ -229,17 +229,17 @@ func (h *Handler) deleteGroup(c *gin.Context) {
 			return handler.NewInternalServerErrorResponse(err)
 		}
 		return handler.NewSuccessResponse(http.StatusOK, nil)
-	}) 
+	})
 }
 
 func RouteV1(cfg *config.Config, h *Handler, r *gin.Engine, auth *jwt.GinJWTMiddleware) {
 	v1 := r.Group("v1/api")
 	v1.Use(middleware.RequestIDMiddleware(), middleware.TimeoutMiddleware(cfg.ServerConfig.WriteTimeout))
-	
+
 	// Authenticated Routes
 	v1.Use(auth.MiddlewareFunc())
 	{
-		v1.GET("/groups", h.createGroup)
+		v1.POST("/groups", h.createGroup)
 		v1.PUT("/groups/:groupId", h.updateGroup)
 		v1.DELETE("/groups/:groupId", h.deleteGroup)
 		v1.POST("/groups/members", h.addGroupMember)
@@ -249,8 +249,8 @@ func RouteV1(cfg *config.Config, h *Handler, r *gin.Engine, auth *jwt.GinJWTMidd
 
 func NewHandler(groupDB groupDB.GroupDB, groupMemberDB groupDB.GroupMemberDB, accountDB accountDB.AccountDB) *Handler {
 	return &Handler{
-		groupDB: groupDB,
+		groupDB:       groupDB,
 		groupMemberDB: groupMemberDB,
-		accountDB: accountDB,
+		accountDB:     accountDB,
 	}
 }
