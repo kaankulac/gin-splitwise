@@ -45,12 +45,12 @@ Make sure you have the following installed:
 3. Set up your configuration using the provided config/local.yaml file in the root directory. You can modify this file to include your specific settings for the database and Redis.
    ```env
     server:
-    port: 8080
+      port: 8080
     db:
-    dataSourceName: postgres://postgres:123123@localhost:5432/splitwise?sslmode=disable
+      dataSourceName: postgres://postgres:123123@localhost:5432/splitwise?sslmode=disable
     redis:
-    host: localhost
-    port: 6379
+      host: localhost
+      port: 6379
    ```
 4. Start the server:
    ```bash
