@@ -14,35 +14,35 @@ type GroupsResponse struct {
 }
 
 type Group struct {
-	ID uint `json:"id"`
-	Title string `json:"title"`
-	Description string `json:"description"`
-	Image string `json:"image"`
-	OwnerId uint `json:"owner_id"`
-	TotalExpense uint `json:"total_expense"`
-	TotalMember uint `json:"total_member"`
-	Members []Member `json:"members"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID           uint      `json:"id"`
+	Title        string    `json:"title"`
+	Description  string    `json:"description"`
+	Image        string    `json:"image"`
+	OwnerId      uint      `json:"owner_id"`
+	TotalExpense uint      `json:"total_expense"`
+	TotalMember  uint      `json:"total_member"`
+	Members      []Member  `json:"members"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type Member struct {
-	ID uint `json:"id"`
-	Username string `json:"name"`
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
 }
 
 func NewGroupResponse(group *model.Group) *GroupResponse {
 	return &GroupResponse{
 		Group: Group{
-			ID: group.ID,
-			Title: group.Title,
-			Description: group.Description,
-			Image: group.Image,
-			OwnerId: group.OwnerId,
+			ID:           group.ID,
+			Title:        group.Title,
+			Description:  group.Description,
+			Image:        group.Image,
+			OwnerId:      group.OwnerId,
 			TotalExpense: group.TotalExpense,
-			TotalMember: group.TotalMember,
-			CreatedAt: group.CreatedAt,
-			UpdatedAt: group.UpdatedAt,
+			TotalMember:  group.TotalMember,
+			CreatedAt:    group.CreatedAt,
+			UpdatedAt:    group.UpdatedAt,
 		},
 	}
 }
@@ -50,16 +50,16 @@ func NewGroupResponse(group *model.Group) *GroupResponse {
 func NewGroupWithMembersResponse(group *model.Group, members []Member) *GroupResponse {
 	return &GroupResponse{
 		Group: Group{
-			ID: group.ID,
-			Title: group.Title,
-			Description: group.Description,
-			Image: group.Image,
-			OwnerId: group.OwnerId,
+			ID:           group.ID,
+			Title:        group.Title,
+			Description:  group.Description,
+			Image:        group.Image,
+			OwnerId:      group.OwnerId,
 			TotalExpense: group.TotalExpense,
-			Members: members,
-			TotalMember: group.TotalMember,
-			CreatedAt: group.CreatedAt,
-			UpdatedAt: group.UpdatedAt,
+			Members:      members,
+			TotalMember:  group.TotalMember,
+			CreatedAt:    group.CreatedAt,
+			UpdatedAt:    group.UpdatedAt,
 		},
 	}
 }
@@ -68,15 +68,15 @@ func NewGroupsResponse(groups []*model.Group) *GroupsResponse {
 	var groupResponse []Group
 	for _, group := range groups {
 		groupResponse = append(groupResponse, Group{
-			ID: group.ID,
-			Title: group.Title,
-			Description: group.Description,
-			Image: group.Image,
-			OwnerId: group.OwnerId,
+			ID:           group.ID,
+			Title:        group.Title,
+			Description:  group.Description,
+			Image:        group.Image,
+			OwnerId:      group.OwnerId,
 			TotalExpense: group.TotalExpense,
-			TotalMember: group.TotalMember,
-			CreatedAt: group.CreatedAt,
-			UpdatedAt: group.UpdatedAt,
+			TotalMember:  group.TotalMember,
+			CreatedAt:    group.CreatedAt,
+			UpdatedAt:    group.UpdatedAt,
 		})
 	}
 
